@@ -19,7 +19,7 @@ import weakref
 import math
 import numpy as np
 import py_trees
-import shapely.geometry
+import shapely
 
 import carla
 
@@ -74,7 +74,7 @@ class Criterion(py_trees.behaviour.Behaviour):
         """
         Terminate the criterion. Can be extended by the user-derived class
         """
-        if self.test_status in ('RUNNING', 'INIT'):
+        if (self.test_status == "RUNNING") or (self.test_status == "INIT"):
             self.test_status = "SUCCESS"
 
         self.logger.debug("%s.terminate()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
@@ -835,7 +835,8 @@ class OnSidewalkTest(Criterion):
                 self._sidewalk_start_location = current_loc
 
         # Case 2) Not inside allowed zones (Driving and Parking)
-        elif current_wp.lane_type not in (carla.LaneType.Driving, carla.LaneType.Parking):
+        elif current_wp.lane_type != carla.LaneType.Driving \
+                and current_wp.lane_type != carla.LaneType.Parking:
 
             # Get the vertices of the vehicle
             heading_vec = current_tra.get_forward_vector()
@@ -859,8 +860,6 @@ class OnSidewalkTest(Criterion):
                 self._map.get_waypoint(bbox[2], lane_type=carla.LaneType.Any),
                 self._map.get_waypoint(bbox[3], lane_type=carla.LaneType.Any)]
 
-            lane_type_list = [bbox_wp[0].lane_type, bbox_wp[1].lane_type, bbox_wp[2].lane_type, bbox_wp[3].lane_type]
-
             # Case 2.1) Not quite outside yet
             if bbox_wp[0].lane_type == (carla.LaneType.Driving or carla.LaneType.Parking) \
                 or bbox_wp[1].lane_type == (carla.LaneType.Driving or carla.LaneType.Parking) \
@@ -871,7 +870,11 @@ class OnSidewalkTest(Criterion):
                 self._outside_lane_active = False
 
             # Case 2.2) At the mini Shoulders between Driving and Sidewalk
-            elif carla.LaneType.Sidewalk in lane_type_list:
+            elif bbox_wp[0].lane_type == carla.LaneType.Sidewalk \
+                or bbox_wp[1].lane_type == carla.LaneType.Sidewalk \
+                or bbox_wp[2].lane_type == carla.LaneType.Sidewalk \
+                    or bbox_wp[3].lane_type == carla.LaneType.Sidewalk:
+
                 if not self._onsidewalk_active:
                     self._onsidewalk_active = True
                     self._sidewalk_start_location = current_loc
@@ -1186,7 +1189,7 @@ class OutsideRouteLanesTest(Criterion):
                 waypoint_angle = (yaw_pre_wp - yaw_cur_wp) % 360
 
                 if waypoint_angle >= self.MAX_ALLOWED_WAYPOINT_ANGLE \
-                        and waypoint_angle <= (360 - self.MAX_ALLOWED_WAYPOINT_ANGLE):  # pylint: disable=chained-comparison
+                        and waypoint_angle <= (360 - self.MAX_ALLOWED_WAYPOINT_ANGLE):
 
                     # Is the ego vehicle going back to the lane, or going out? Take the opposite
                     self._wrong_lane_active = not bool(self._wrong_lane_active)
@@ -1516,7 +1519,7 @@ class InRouteTest(Criterion):
         if self._terminate_on_failure and (self.test_status == "FAILURE"):
             new_status = py_trees.common.Status.FAILURE
 
-        elif self.test_status in ('RUNNING', 'INIT'):
+        elif self.test_status == "RUNNING" or self.test_status == "INIT":
 
             off_route = True
 
@@ -1638,7 +1641,7 @@ class RouteCompletionTest(Criterion):
         if self._terminate_on_failure and (self.test_status == "FAILURE"):
             new_status = py_trees.common.Status.FAILURE
 
-        elif self.test_status in ('RUNNING', 'INIT'):
+        elif self.test_status == "RUNNING" or self.test_status == "INIT":
 
             for index in range(self._current_index, min(self._current_index + self._wsize + 1, self._route_length)):
                 # Get the dot product to know if it has passed this location
@@ -1927,7 +1930,7 @@ class RunningStopTest(Criterion):
         am_ad = AM.x * AD.x + AM.y * AD.y
         ad_ad = AD.x * AD.x + AD.y * AD.y
 
-        return am_ab > 0 and am_ab < ab_ab and am_ad > 0 and am_ad < ad_ad  # pylint: disable=chained-comparison
+        return am_ab > 0 and am_ab < ab_ab and am_ad > 0 and am_ad < ad_ad
 
     def is_actor_affected_by_stop(self, actor, stop, multi_step=20):
         """

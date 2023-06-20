@@ -34,7 +34,7 @@ class RouteParser(object):
         :return:
         """
 
-        with open(annotation_filename, 'r', encoding='utf-8') as f:
+        with open(annotation_filename, 'r') as f:
             annotation_dict = json.loads(f.read())
 
         final_dict = {}
@@ -226,7 +226,11 @@ class RouteParser(object):
         if scenario == 'Scenario7':
             for tuple_wp_turn in trajectory[match_position:]:
                 if check_this_waypoint(tuple_wp_turn):
-                    if RoadOption.STRAIGHT == tuple_wp_turn[1]:
+                    if RoadOption.LEFT == tuple_wp_turn[1]:
+                        subtype = 'S7left'
+                    elif RoadOption.RIGHT == tuple_wp_turn[1]:
+                        subtype = 'S7right'
+                    elif RoadOption.STRAIGHT == tuple_wp_turn[1]:
                         subtype = 'S7opposite'
                     else:
                         subtype = None

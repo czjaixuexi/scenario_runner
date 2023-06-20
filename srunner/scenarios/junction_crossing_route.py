@@ -148,7 +148,6 @@ class NoSignalJunctionCrossingRoute(BasicScenario):
         """
         Custom initialization
         """
-        pass
 
     def _create_behavior(self):
         """
@@ -181,7 +180,20 @@ class NoSignalJunctionCrossingRoute(BasicScenario):
         in parallel behavior tree.
         """
         criteria = []
-        criteria.append(CollisionTest(self.ego_vehicles[0]))
+
+        max_velocity_criterion = MaxVelocityTest(
+            self.ego_vehicles[0],
+            self._ego_max_velocity_allowed,
+            optional=True)
+        collision_criterion = CollisionTest(self.ego_vehicles[0])
+        driven_distance_criterion = DrivenDistanceTest(
+            self.ego_vehicles[0],
+            self._ego_expected_driven_distance)
+
+        criteria.append(max_velocity_criterion)
+        criteria.append(collision_criterion)
+        criteria.append(driven_distance_criterion)
+
         return criteria
 
     def __del__(self):

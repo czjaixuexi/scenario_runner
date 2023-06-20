@@ -11,7 +11,7 @@ It is for example used in the ScenarioManager
 """
 from __future__ import print_function
 
-import simple_watchdog_timer as swt
+from threading import Timer
 try:
     import thread
 except ImportError:
@@ -19,68 +19,61 @@ except ImportError:
 
 
 class Watchdog(object):
+
     """
     Simple watchdog timer to detect timeouts
 
     Args:
-        timeout (float): Timeout value of the watchdog [seconds]. If triggered, raises a KeyboardInterrupt.
-        interval (float): Time between timeout checks [seconds]. Defaults to 1% of the timeout.
+        timeout (float): Timeout value of the watchdog [seconds].
+            If it is not reset before exceeding this value, a KayboardInterrupt is raised.
 
     Attributes:
         _timeout (float): Timeout value of the watchdog [seconds].
-        _interval (float): Time between timeout checks [seconds].
-        _failed (bool): True if watchdog exception occured, false otherwise
+        _failed (bool):   True if watchdog exception occured, false otherwise
     """
 
-    def __init__(self, timeout=1.0, interval=None):
-        """Class constructor"""
-        self._watchdog = None
-        self._timeout = timeout + 1.0
-        self._interval = min(interval if interval is not None else self._timeout / 100, 1.0)
+    def __init__(self, timeout=1.0):
+        """
+        Class constructor
+        """
+        self._timeout = timeout + 1.0  # Let's add one second here to avoid overlap with other CARLA timeouts
         self._failed = False
-        self._watchdog_stopped = False
+        self._timer = None
 
     def start(self):
-        """Start the watchdog"""
-        self._watchdog = swt.WDT(
-            check_interval_sec=self._interval,
-            trigger_delta_sec=self._timeout,
-            callback=self._callback
-        )
-
-    def stop(self):
-        """Stop the watchdog"""
-        if self._watchdog is not None and not self._watchdog_stopped:
-            self.resume()  # If not resumed, the stop will block. Does nothing if already resumed
-            self._watchdog.stop()
-            self._watchdog_stopped = True
-
-    def pause(self):
-        """Pause the watchdog"""
-        if self._watchdog is not None:
-            self._watchdog.pause()
-
-    def resume(self):
-        """Resume the watchdog."""
-        if self._watchdog is not None:
-            self._watchdog.resume()
+        """
+        Start the watchdog
+        """
+        self._timer = Timer(self._timeout, self._event)
+        self._timer.daemon = True
+        self._timer.start()
 
     def update(self):
-        """Reset the watchdog."""
-        if self._watchdog_stopped:
-            return
+        """
+        Reset watchdog.
+        """
+        self.stop()
+        self.start()
 
-        if self._watchdog is not None:
-            self._watchdog.update()
-
-    def _callback(self, watchdog):
-        """Method called when the timer triggers. Raises a KeyboardInterrupt on
-        the main thread and stops the watchdog."""
-        self.pause()  # Good practice to stop it after the event occurs
+    def _event(self):
+        """
+        This method is called when the timer triggers. A KayboardInterrupt
+        is generated on the main thread and the watchdog is stopped.
+        """
         print('Watchdog exception - Timeout of {} seconds occured'.format(self._timeout))
         self._failed = True
+        self.stop()
         thread.interrupt_main()
 
+    def stop(self):
+        """
+        Stops the watchdog.
+        """
+        self._timer.cancel()
+
     def get_status(self):
-        """returns False if watchdog exception occured, True otherwise"""
+        """
+        returns:
+           bool:  False if watchdog exception occured, True otherwise
+        """
         return not self._failed

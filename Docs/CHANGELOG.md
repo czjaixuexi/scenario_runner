@@ -1,7 +1,5 @@
 ## Table of Contents
 * [Latest Changes](#latest-changes)
-* [CARLA ScenarioRunner 0.9.13](#carla-scenariorunner-0913)
-* [CARLA ScenarioRunner 0.9.12](#carla-scenariorunner-0912)
 * [CARLA ScenarioRunner 0.9.11](#carla-scenariorunner-0911)
 * [CARLA ScenarioRunner 0.9.10](#carla-scenariorunner-0910)
 * [CARLA ScenarioRunner 0.9.9](#carla-scenariorunner-099)
@@ -12,60 +10,7 @@
 * [CARLA ScenarioRunner 0.9.5](#carla-scenariorunner-095)
 * [CARLA ScenarioRunner 0.9.2](#carla-scenariorunner-092)
 
-## Latest changes
-### :rocket: New Features
-* Minor improvements to some example scenarios. These include FollowLeadingVehicle, VehicleTurning, DynamicObjectCrossing and SignalizedJunctionRightTurn and RunningRedLight. Their behaviors are now more smooth, robust and some outdated mechanics have been removed
-* SignalizedJunctionLeftTurn has been remade. It now has an actor flow on which the ego has to merge into, instead of a single vehicle.
-* The BackgroundActivity has been readded to the routes, which the objective of creating the sensation of traffic around the ego
-* Add waypoint reached threshold so that the precision of the actor reaching to waypoints can be adjusted based on object types.
-
-### :bug: Bug Fixes
-* Fixed bug at OtherLeadingVehicle scenario causing the vehicles to move faster than intended
-* Fixed bug causing some debris at ControlLoss scenario to be floating, instead of at ground level
-
-## CARLA ScenarioRunner 0.9.13
-### :rocket: New Features
-* OpenSCENARIO support:
-    - Added support for `ParameterAction`
-    - Extended `ParameterCondition` support to use as an event trigger condition
-    - Added basic support for FollowTrajectoryAction. Currently only Polylines are supported
-
-### :bug: Bug Fixes
-* Fixed metrics parsing and remade the example recordings
-* Fixed a bug with repetitions / scenario groups causing the simulation to crash after the second one.
-* Fixed use of OSC Parameters as entry names for catalogs
-
-### :ghost: Maintenance
-* Removed CARLA example dependencies
-
-## CARLA ScenarioRunner 0.9.12
-### :rocket: New Features
-* OpenSCENARIO support:
-    - Added support for LongitudinalDistanceAction
-    - Extended RelativeDistanceCondition with support for 'longitudinal' and 'lateral' distance along with freespace.
-    - Added support for RelativeRoadPosition
-    - Added support for RoadPosition
-    - Added `--openscenarioparams` argument to overwrite global `ParameterDeclaration`
-    - Added controller using CARLA's autopilot (in replacement for ActivateControllerAction)
-    - Added support for storyboards with multiple stories
-    - Eliminated unnecessary reloads of OpenDRIVE maps
-* Additional Scenarios:
-    - Added Construction setup scenario.
-### :bug: Bug Fixes
-* Fixed LaneOffset (+ vs. -) for OpenSCENARIO
-* Fixed RelativeLanePosition for OpenSCENARIO causing exception when using ds != 0
-* Fixed bug at the Getting Started docs which caused an import error
-* Fixed neverending lane change maneuver in OpenSCENARIO
-* Fixed bug causing the spawning of an actor with `request_new_actor` to never activate the autopilot.
-* Fixed handling of evaluation criteria in OpenSCENARIO (using a delay value of .0 caused an exception)
-### :ghost: Maintenance
-* Extended SimpleVehicleController (OSC) to handle traffic lights
-* Generalized visualizer attached to OSC controllers
-* Fixed bug at the Getting Started docs which caused an import error
-* Improved the watchdog. It can now be paused, resumed and uses the same thread, instead of opening and closing new ones each frame.
-* Added `simple-watchdog-timer` library to the requirements, as it is used by the new watchdog. This requires Python 3.x from now on!
-* Extended CarlaDataProvider's spawning functions to allow filtering the safer blueprint, and optionally tick the server
-* Improved cleanup handling to resolve memory leak issues and resolve timeouts
+## Latest Changes
 
 ## CARLA ScenarioRunner 0.9.11
 ### :rocket: New Features

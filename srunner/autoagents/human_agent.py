@@ -37,9 +37,9 @@ class HumanInterface(object):
     Class to control a vehicle manually for debugging purposes
     """
 
-    def __init__(self, width, height):
-        self._width = width
-        self._height = height
+    def __init__(self):
+        self._width = 800
+        self._height = 600
         self._surface = None
 
         pygame.init()
@@ -84,12 +84,9 @@ class HumanAgent(AutonomousAgent):
         """
 
         self.agent_engaged = False
-        self.camera_width = 800
-        self.camera_height = 500
-
-        self._hic = HumanInterface(self.camera_width, self.camera_height)
-        self._controller = KeyboardControl(path_to_conf_file)
         self.prev_timestamp = 0
+        self._hic = HumanInterface()
+        self._controller = KeyboardControl(path_to_conf_file)
 
     def sensors(self):
         """
@@ -111,7 +108,7 @@ class HumanAgent(AutonomousAgent):
 
         """
         sensors = [{'type': 'sensor.camera.rgb', 'x': 0.7, 'y': 0.0, 'z': 1.60, 'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0,
-                    'width': self.camera_width, 'height': self.camera_height, 'fov': 100, 'id': 'Center'},
+                    'width': 800, 'height': 600, 'fov': 100, 'id': 'Center'},
                    {'type': 'sensor.other.gnss', 'x': 0.7, 'y': -0.4, 'z': 1.60, 'id': 'GPS'}
                    ]
 
