@@ -76,4 +76,12 @@
     <other_actor x="222" y="160.5" z="2.5" yaw="100" model="vehicle.lincoln2020.*" />
     <weather cloudiness="0" precipitation="0" precipitation_deposits="0" wind_intensity="0" sun_azimuth_angle="0" sun_altitude_angle="75" />
     </scenario>
+
+    <scenario name="Avoid_1" type="AvoidingObstacles" town="Town03" >
+        <ego_vehicle x="229.5" y="86" z="2.5" yaw="90" model="vehicle.tesla.model3" rolename="ego_vehicle" />
+            <!-- spawn actors-->
+        <other_actor x="228" y="110" z="2.5" yaw="90" model="vehicle.tesla.model3" /> 
+        <other_actor x="221" y="161.5" z="2.5" yaw="80" model="vehicle.mini.cooper_s" />
+        <weather cloudiness="0" precipitation="0" precipitation_deposits="0" wind_intensity="0" sun_azimuth_angle="0" sun_altitude_angle="75" />
+        </scenario>
 </scenarios>
